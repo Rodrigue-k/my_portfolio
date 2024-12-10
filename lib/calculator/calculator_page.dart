@@ -22,6 +22,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     return Scaffold(
       backgroundColor: Colors.purple[200],
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         centerTitle: true,
         title: const Text(
