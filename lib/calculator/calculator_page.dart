@@ -1,16 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:math_expressions/math_expressions.dart';
 
-class CalculatorPage extends StatefulWidget {
+class CalculatorPage extends ConsumerStatefulWidget {
   const CalculatorPage({super.key});
 
   @override
-  State<CalculatorPage> createState() => _CalculatorPageState();
+  ConsumerState<CalculatorPage> createState() => _CalculatorPageState();
 }
 
-class _CalculatorPageState extends State<CalculatorPage> {
-  final List<String> buttomTexts = [];
+final activeModeProvider = StateProvider<bool>((ref) => false);
+
+class _CalculatorPageState extends ConsumerState<CalculatorPage> {
+  final List<String> buttonTexts = [];
 
   String result = "";
 
@@ -19,8 +22,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
     final screemHeight = MediaQuery.of(context).size.height;
     final screemWidth = MediaQuery.of(context).size.width;
 
+    final isActive = ref.watch(activeModeProvider);
+
     return Scaffold(
-      backgroundColor: Colors.purple[200],
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
@@ -32,95 +37,111 @@ class _CalculatorPageState extends State<CalculatorPage> {
           ),
         ),
       ),
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.only(
-              top: screemHeight * 0.060,
-              left: screemHeight * 0.020,
-              right: screemHeight * 0.020),
-          margin: EdgeInsets.symmetric(horizontal: screemHeight * 0.020),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                    offset: Offset(0, 10),
-                    color: Colors.grey,
-                    blurRadius: 50,
-                    spreadRadius: 10)
-              ]),
-          //color: Colors.purple[50],
-          height: screemHeight * 0.7,
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: ElevatedButton(
+              onPressed: () => ref.read(activeModeProvider.notifier).state = !isActive,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.tertiary
+                  ),
+              child: isActive
+                  ? const Icon(Icons.dark_mode)
+                  : const Icon(Icons.light_mode, ),
+            ),
+          ),
+          Center(
+            child: Container(
+              padding: EdgeInsets.only(
+                  top: screemHeight * 0.060,
+                  left: screemHeight * 0.020,
+                  right: screemHeight * 0.020),
+              margin: EdgeInsets.symmetric(horizontal: screemHeight * 0.020),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
                       offset: const Offset(0, 10),
-                      color: Colors.grey.withOpacity(0.5),
-                      blurRadius: 10,
+                      color: Theme.of(context).colorScheme.tertiary,
+                      blurRadius: 50,
                     )
-                  ],
-                ),
-                height: screemHeight * 0.09,
-                width: screemWidth * 1,
-                child: SingleChildScrollView(
-                  reverse: true,
-                  scrollDirection: Axis.horizontal,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      result == "" ? "0" : result,
-                      style: const TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600,
+                  ]),
+              //color: Colors.purple[50],
+              height: screemHeight * 0.7,
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          offset: const Offset(0, 10),
+                          color: Theme.of(context).colorScheme.tertiary,
+                          blurRadius: 20,
+                        )
+                      ],
+                    ),
+                    height: screemHeight * 0.09,
+                    width: screemWidth * 1,
+                    child: SingleChildScrollView(
+                      reverse: true,
+                      scrollDirection: Axis.horizontal,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          result == "" ? "0" : result,
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  SizedBox(
+                    height: screemHeight * 0.02,
+                  ),
+                  _buildRow([
+                    'clr',
+                    'DEL',
+                    '%',
+                    '/',
+                  ]),
+                  _buildRow([
+                    '7',
+                    '8',
+                    '9',
+                    '*',
+                  ]),
+                  _buildRow([
+                    '4',
+                    '5',
+                    '6',
+                    '-',
+                  ]),
+                  _buildRow([
+                    '1',
+                    '2',
+                    '3',
+                    '+',
+                  ]),
+                  _buildRow([
+                    '.',
+                    '0',
+                    '=',
+                  ]),
+                  SizedBox(
+                    height: screemHeight * 0.04,
+                  )
+                ],
               ),
-              SizedBox(
-                height: screemHeight * 0.02,
-              ),
-              _buildRow([
-                'clr',
-                'DEL',
-                '%',
-                '/',
-              ]),
-              _buildRow([
-                '7',
-                '8',
-                '9',
-                '*',
-              ]),
-              _buildRow([
-                '4',
-                '5',
-                '6',
-                '-',
-              ]),
-              _buildRow([
-                '1',
-                '2',
-                '3',
-                '+',
-              ]),
-              _buildRow([
-                '.',
-                '0',
-                '=',
-              ]),
-              SizedBox(
-                height: screemHeight * 0.04,
-              )
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -150,7 +171,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 ? Colors.red
                 : text == "clr"
                     ? Colors.pink
-                    : Colors.white,
+                    : Theme.of(context).colorScheme.secondary,
         minimumSize: const Size(64, 64),
         padding: const EdgeInsets.all(0.2),
         shape: text == "="
