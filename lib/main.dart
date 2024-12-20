@@ -4,6 +4,9 @@ import 'package:my_portfolio/calculator/calculator_page.dart';
 import 'package:my_portfolio/calculator/theme/calculator_dark_theme.dart';
 import 'package:my_portfolio/calculator/theme/calculator_light_theme.dart';
 import 'package:my_portfolio/home/home_page.dart';
+import 'package:my_portfolio/ofline_map/offline_map.dart';
+import 'package:my_portfolio/search/search.dart';
+
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -19,10 +22,12 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: isActive ? calculatorDarkTheme : calculatorLightTheme,
       title: 'My Portfolio',
-      initialRoute: '/calculator',
+      initialRoute: '/search',
       routes: {
-        //'/': (context) => const HomePage(),
+        '/': (context) => const HomePage(),
         '/calculator': (context) => const CalculatorPage(),
+        '/offline_map': (context) => const OfflineMapPage(),
+        '/search': (context) => const SearchPageEssai(),
       },
     );
   }
